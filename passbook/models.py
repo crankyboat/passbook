@@ -176,8 +176,15 @@ class PassInformation(object):
     def addBackField(self, key, value, label):
         self.backFields.append(Field(key, value, label))
 
-    def addAuxiliaryField(self, key, value, label):
-        self.auxiliaryFields.append(Field(key, value, label))
+    def addAuxiliaryField(self, key, value, label, type=None):
+        if not type:
+            self.auxiliaryFields.append(Field(key, value, label))
+        elif type == 'Date':
+            self.auxiliaryFields.append(DateField(key, value, label))
+        elif type == 'Number':
+            self.auxiliaryFields.append(NumberField(key, value, label))
+        else:  # type == 'Currency'
+            self.auxiliaryFields.append(CurrencyField(key, value, label))
 
     def json_dict(self):
         d = {}
