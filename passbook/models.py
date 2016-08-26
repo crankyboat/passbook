@@ -115,7 +115,7 @@ class Barcode(object):
 
 class Location(object):
 
-    def __init__(self, latitude, longitude, altitude=0.0):
+    def __init__(self, latitude, longitude, altitude=0.0, text=''):
         # Required. Latitude, in degrees, of the location.
         try:
             self.latitude = float(latitude)
@@ -131,11 +131,9 @@ class Location(object):
             self.altitude = float(altitude)
         except (ValueError, TypeError):
             self.altitude = 0.0
-        # Optional. Notification distance
-        self.distance = None
         # Optional. Text displayed on the lock screen when
         # the pass is currently near the location
-        self.relevantText = ''
+        self.relevantText = text
 
     def json_dict(self):
         return self.__dict__
@@ -290,12 +288,13 @@ class Pass(object):
 
         # Optional. Locations where the pass is relevant.
         # For example, the location of your store.
-        self.locations = None
+        self.locations = []
         # Optional. IBeacons data
         self.ibeacons = None
         # Optional. Date and time when the pass becomes relevant
         self.relevantDate = None
-
+        # Optional. Maximum distance in meters from a relevant latitude and longitude that the pass is relevant.
+        self.maxDistance = None
         # Optional. A list of iTunes Store item identifiers for
         # the associated apps.
         self.associatedStoreIdentifiers = None
@@ -311,6 +310,9 @@ class Pass(object):
     # Adds file to the file array
     def addFile(self, name, fd):
         self._files[name] = fd.read()
+
+    def addLocation(self, lat, lng, text):
+        self.locations.append(Location(lat, lng, text=text))
 
     # Creates the actual .pkpass file
     def create(self, certificate, key, wwdr_certificate, password, zip_file=None):
@@ -399,7 +401,7 @@ class Pass(object):
         if self.logoText:
             d.update({'logoText': self.logoText})
         if self.locations:
-            d.update({'locations': self.locations})
+            d.update({'locations': [f.json_dict() for f in self.locations]})
         if self.ibeacons:
             d.update({'beacons': self.ibeacons})
         if self.userInfo:
