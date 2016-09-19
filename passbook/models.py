@@ -166,24 +166,24 @@ class PassInformation(object):
     def addHeaderField(self, key, value, label):
         self.headerFields.append(Field(key, value, label))
 
-    def addPrimaryField(self, key, value, label):
-        self.primaryFields.append(Field(key, value, label))
+    def addPrimaryField(self, key, value, label, changeMessage=''):
+        self.primaryFields.append(Field(key, value, label, changeMessage))
 
-    def addSecondaryField(self, key, value, label):
-        self.secondaryFields.append(Field(key, value, label))
+    def addSecondaryField(self, key, value, label, changeMessage=''):
+        self.secondaryFields.append(Field(key, value, label, changeMessage))
 
-    def addBackField(self, key, value, label):
-        self.backFields.append(Field(key, value, label))
+    def addBackField(self, key, value, label, changeMessage=''):
+        self.backFields.append(Field(key, value, label, changeMessage))
 
-    def addAuxiliaryField(self, key, value, label, type=None, changeMessage=''):
-        if not type:
-            self.auxiliaryFields.append(Field(key, value, label, changeMessage))
-        elif type == 'Date':
+    def addAuxiliaryField(self, key, value, label, changeMessage='', type=''):
+        if type == 'Date':
             self.auxiliaryFields.append(DateField(key, value, label, changeMessage))
         elif type == 'Number':
             self.auxiliaryFields.append(NumberField(key, value, label, changeMessage))
-        else:  # type == 'Currency'
+        elif type == 'Currency':
             self.auxiliaryFields.append(CurrencyField(key, value, label, changeMessage))
+        else:
+            self.auxiliaryFields.append(Field(key, value, label, changeMessage))
 
     def json_dict(self):
         d = {}
